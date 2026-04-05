@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViralGen - Gerador de Curiosidades</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .box-ideia {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px dashed var(--primaria);
+            margin: 20px 0;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #ff9f43;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="logo-text">ViralGen 💡</h1>
+        <h2>Nicho: Curiosidades</h2>
+        
+        <div class="box-ideia" id="resultado-ideia">
+            Clique no botão para descobrir algo bizarro!
+        </div>
+
+        <button class="btn-login" onclick="gerarIdeiaCuriosidades()">🔄 GERAR CURIOSIDADE VIRAL</button>
+        <br><br>
+        <button class="btn-login" style="background: #444;" onclick="window.location.href='index.html'">⬅ Voltar ao Painel</button>
+        
+        <footer class="creditos">
+            <p>Dono: Pedro Gabriel | Desenvolvedor: Pedro Gabriel</p>
+        </footer>
+    </div>
+
+    <script>
+        function gerarIdeiaCuriosidades() {
+            const ideias = [
+                "O que acontece com o corpo humano se você parar de dormir?",
+                "5 Lugares da Terra onde o Google Maps é proibido de mostrar.",
+                "A coisa mais cara do mundo que você (provavelmente) nunca viu.",
+                "E se a internet caísse no mundo todo por exatas 24 horas?",
+                "O som mais assustador já captado pela NASA no espaço sideral."
+            ];
+            const aleatorio = Math.floor(Math.random() * ideias.length);
+            document.getElementById('resultado-ideia').innerText = ideias[aleatorio];
+        }
+    </script>
+</body>
+</html>
+<script>
+    let cliques = 0;
+
+    function gerarIdeiaCuriosidades() {
+        const ideias = [
+            "O que acontece com o corpo humano se você parar de dormir?",
+            "5 Lugares da Terra onde o Google Maps é proibido de mostrar.",
+            "A coisa mais cara do mundo que você (provavelmente) nunca viu.",
+            "E se a internet caísse no mundo todo por exatas 24 horas?",
+            "O som mais assustador já captado pela NASA no espaço sideral."
+        ];
+
+        cliques++;
+
+        if (cliques > 5) {
+            document.getElementById('resultado-ideia').innerHTML = 
+                "<span style='color: #2ecc71;'>🚀 Limite Grátis atingido! <br> Assine o PRO para liberar +50 ideias e novos nichos!</span>";
+        } else {
+            document.getElementById('resultado-ideia').innerText = ideias[cliques - 1];
+        }
+    }
+</script>
