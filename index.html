@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViralGen - Painel Oficial</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <div id="login-area">
+            <h1 class="logo-text">ViralGen</h1>
+            <p>Acesse sua conta para continuar</p>
+            <input type="email" id="userEmail" placeholder="Seu e-mail de acesso">
+            <button class="btn-login" onclick="logar()">Acessar Painel</button>
+        </div>
+
+        <div id="main-content" class="hidden">
+            <h2>Escolha seu Nicho</h2>
+            <div class="grid-nichos">
+                <button class="nicho-btn" onclick="selecionarNicho('games')">🎮 Games</button>
+                <button class="nicho-btn" onclick="selecionarNicho('curiosidades')">💡 Curiosidades</button>
+                
+                <button class="nicho-btn locked" onclick="alertaPro()">💰 Finanças 🔒</button>
+                <button class="nicho-btn locked" onclick="alertaPro()">🎬 Cortes 🔒</button>
+            </div>
+
+            <div class="card-pro">
+                <h3>Vire Membro PRO 🚀</h3>
+                <p>Libere todos os nichos e funções exclusivas.</p>
+                <a href="https://pay.kiwify.com.br/SEU_LINK_AQUI" target="_blank" class="btn-kiwify">ASSINAR VIA KIWIFY</a>
+            </div>
+        </div>
+
+        <footer class="creditos">
+            <p>Dono: Pedro Gabriel | Desenvolvedor: Pedro Gabriel</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViralGen - Gerador de Games</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .box-ideia {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px dashed var(--primaria);
+            margin: 20px 0;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #48dbfb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="logo-text">ViralGen 🎮</h1>
+        <h2>Nicho: Games</h2>
+        
+        <div class="box-ideia" id="resultado-ideia">
+            Clique no botão para gerar uma ideia viral!
+        </div>
+
+        <button class="btn-login" onclick="gerarIdeiaGames()">🔄 GERAR IDEIA ALEATÓRIA</button>
+        <br><br>
+        <button class="btn-login" style="background: #444;" onclick="window.location.href='index.html'">⬅ Voltar ao Painel</button>
+        
+        <footer class="creditos">
+            <p>Dono: Pedro Gabriel | Desenvolvedor: Pedro Gabriel</p>
+        </footer>
+    </div>
+
+    <script>
+        function gerarIdeiaGames() {
+            const ideias = [
+                "O Segredo que 99% dos players não viram em um mapa famoso.",
+                "Como rodar jogos pesados em PC Fraco ou Celular (Tutorial Rápido).",
+                "O item mais raro do jogo que ninguém consegue pegar (História).",
+                "Desafio: Zerei o jogo sem usar nenhum item de cura!",
+                "3 Jogos grátis que parecem custar 100 reais."
+            ];
+            const aleatorio = Math.floor(Math.random() * ideias.length);
+            document.getElementById('resultado-ideia').innerText = ideias[aleatorio];
+        }
+    </script>
+</body>
+</html>
+<script>
+    let cliques = 0; // Começa o contador em zero
+
+    function gerarIdeiaGames() {
+        const ideias = [
+            "O Segredo que 99% dos players não viram em um mapa famoso.",
+            "Como rodar jogos pesados em PC Fraco ou Celular (Tutorial Rápido).",
+            "O item mais raro do jogo que ninguém consegue pegar (História).",
+            "Desafio: Zerei o jogo sem usar nenhum item de cura!",
+            "3 Jogos grátis que parecem custar 100 reais."
+        ];
+
+        cliques++; // Adiciona +1 clique cada vez que aperta o botão
+
+        if (cliques > 5) {
+            // Se passar de 5, mostra o aviso do PRO
+            document.getElementById('resultado-ideia').innerHTML = 
+                "<span style='color: #2ecc71;'>🚀 Limite Grátis atingido! <br> Assine o PRO para liberar +50 ideias e novos nichos!</span>";
+        } else {
+            // Mostra a ideia baseada no número do clique
+            document.getElementById('resultado-ideia').innerText = ideias[cliques - 1];
+        }
+    }
+</script>
