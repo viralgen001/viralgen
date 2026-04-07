@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard do Pedrin - Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f0f0f0; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 250px; }
+        button { padding: 10px 20px; background-color: #3ecf8e; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-left: 10px; }
+        button:hover { background-color: #34b27b; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Laboratório do Pedrin</h1>
+        <p>Digite algo para salvar no seu banco de dados:</p>
+        <input type="text" id="meuInput" placeholder="Ex: Salve no Supabase!">
+        <button onclick="enviar()">Salvar</button>
+    </div>
+
+    <script>
+        // --- COLA TEUS DADOS AQUI EMBAIXO ---
+        const S_URL = "SUA_URL_AQUI" 
+        const S_KEY = "SUA_CHAVE_PUBLICAVEL_AQUI"
+        // ------------------------------------
+
+        // Inicializa o cliente Supabase
+        const supabaseClient = supabase.createClient(S_URL, S_KEY)
+
+        async function enviar() {
+            const campo = document.getElementById('meuInput')
+            const valor = campo.value
+
+            if (!valor) {
+                alert("Escreve alguma coisa primeiro, mano!")
+                return
+            }
+
+            // Envia para a tabela 'postagens' na coluna 'texto'
+            const { error } = await supabaseClient
+                .from('postagens')
+                .insert([{ texto: valor }])
+
+            if (error) {
+                console.error(error)
+                alert("Erro ao salvar: " + error.message)
+            } else {
+                alert("Salvou no Supabase! Voou! 🚀")
+                campo.value = "" // Limpa o campo depois de salvar
+            }
+        }
+    </script>
+</body>
+</html>
