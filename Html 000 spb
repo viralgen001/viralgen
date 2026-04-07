@@ -2,89 +2,62 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ViralGen - Painel do Pedrin</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .card { background: #1e1e1e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; border: 1px solid #333; }
-        h1 { color: #3ecf8e; margin-bottom: 5px; }
-        p { color: #aaa; font-size: 14px; }
-        input { width: 100%; padding: 12px; border: 1px solid #333; border-radius: 8px; background: #2a2a2a; color: white; margin-bottom: 15px; box-sizing: border-box; outline: none; }
-        input:focus { border-color: #3ecf8e; }
-        button { width: 100%; padding: 12px; background-color: #3ecf8e; color: #121212; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        button:hover { background-color: #34b27b; transform: translateY(-2px); }
-        hr { border: 0; border-top: 1px solid #333; margin: 25px 0; }
-        #listaPostagens { text-align: left; max-height: 300px; overflow-y: auto; }
-        .post-item { background: #2a2a2a; padding: 10px; border-radius: 5px; margin-bottom: 10px; border-left: 4px solid #3ecf8e; font-size: 14px; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body { font-family: sans-serif; background-color: #121212; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .card { background: #1e1e1e; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #333; }
+        input { width: 100%; padding: 12px; border-radius: 8px; background: #2a2a2a; color: white; margin-bottom: 15px; border: 1px solid #444; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #3ecf8e; color: #121212; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .post-item { background: #2a2a2a; padding: 10px; border-radius: 5px; margin-top: 10px; border-left: 4px solid #3ecf8e; text-align: left; }
     </style>
 </head>
 <body>
 
     <div class="card">
         <h1>ViralGen 🚀</h1>
-        <p>Banco de dados conectado!</p>
-        
-        <input type="text" id="meuInput" placeholder="Digite sua ideia de conteúdo...">
-        <button onclick="enviar()">Salvar no Banco</button>
-
+        <input type="text" id="meuInput" placeholder="Digite sua ideia...">
+        <button id="btnSalvar">Salvar no Banco</button>
         <hr>
-        <h3 style="color: #3ecf8e;">Ideias Salvas:</h3>
-        <div id="listaPostagens">Carregando...</div>
+        <div id="listaPostagens">Carregando mensagens...</div>
     </div>
 
     <script>
-        // --- COLA TEUS DADOS AQUI ---
-        const S_URL = "SUA_URL_AQUI" 
-        const S_KEY = "SUA_CHAVE_PUBLICAVEL_AQUI"
-        // ----------------------------
+        // Usei os dados que vi nos seus prints:
+        const S_URL = "https://vbrlcvprspacfzadgrrk.supabase.co";
+        const S_KEY = "sb_publishable_5hfbr92qcpXnLUM44xx_zA_4gfJwKbZ";
+        
+        const supabaseClient = supabase.createClient(S_URL, S_KEY);
 
-        const supabaseClient = supabase.createClient(S_URL, S_KEY)
-
-        // 1. FUNÇÃO PARA CARREGAR OS DADOS
-        async function carregarPostagens() {
-            const lista = document.getElementById('listaPostagens')
-            
-            const { data, error } = await supabaseClient
-                .from('postagens')
-                .select('*')
-                .order('created_at', { ascending: false })
-
-            if (error) {
-                lista.innerHTML = "Erro: " + error.message
-            } else {
-                lista.innerHTML = ""
+        // Função para carregar o que já está no banco
+        async function carregar() {
+            const { data, error } = await supabaseClient.from('postagens').select('*').order('created_at', { ascending: false });
+            const lista = document.getElementById('listaPostagens');
+            if (data) {
+                lista.innerHTML = "";
                 data.forEach(item => {
-                    const div = document.createElement('div')
-                    div.className = 'post-item'
-                    div.innerHTML = item.texto
-                    lista.appendChild(div)
-                })
+                    lista.innerHTML += `<div class="post-item">${item.texto}</div>`;
+                });
             }
         }
 
-        // 2. FUNÇÃO PARA ENVIAR DADOS
-        async function enviar() {
-            const campo = document.getElementById('meuInput')
-            const valor = campo.value
+        // Função para enviar
+        document.getElementById('btnSalvar').onclick = async () => {
+            const campo = document.getElementById('meuInput');
+            const valor = campo.value;
+            if (!valor) return alert("Escreve algo!");
 
-            if (!valor) return alert("Escreve algo primeiro!")
-
-            const { error } = await supabaseClient
-                .from('postagens')
-                .insert([{ texto: valor }])
+            const { error } = await supabaseClient.from('postagens').insert([{ texto: valor }]);
 
             if (error) {
-                alert("Erro: " + error.message)
+                alert("Erro: " + error.message);
             } else {
-                campo.value = "" // Limpa o campo
-                carregarPostagens() // Atualiza a lista na hora!
+                campo.value = "";
+                carregar(); // Atualiza a lista na hora
             }
-        }
+        };
 
-        // Carrega assim que abrir a página
-        carregarPostagens()
+        carregar();
     </script>
 </body>
 </html>
