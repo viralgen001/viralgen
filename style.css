@@ -1,105 +1,105 @@
+
 :root {
-    --primaria: #5f27cd;
-    --secundaria: #2ecc71;
-    --fundo: #0a0a0a;
-    --card: #1a1a1a;
+    --cor-destaque: #8c00ff; /* Mude para a cor que você deseja que a foto siga */
+    --fundo-card: #121212;
+    --fundo-input: #1e1e1e;
     --texto: #ffffff;
-    --cinza-discreto: #555555;
 }
 
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: var(--fundo);
-    color: var(--texto);
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.container { width: 90%; max-width: 500px; text-align: center; }
-
-.logo-text { color: var(--primaria); font-size: 2.5rem; margin-bottom: 5px; }
-
-#login-area {
-    background: var(--card);
-    padding: 40px;
+.painel-verificacao {
+    width: 100%;
+    max-width: 500px;
+    background: var(--fundo-card);
     border-radius: 20px;
-    border: 1px solid var(--primaria);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    overflow: hidden;
+    font-family: 'Segoe UI', sans-serif;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    margin: 20px auto;
 }
 
-input {
+.header-imagem {
+    position: relative;
+    height: 120px;
+    background: var(--cor-destaque);
+}
+
+.header-imagem img {
     width: 100%;
-    padding: 12px;
-    margin: 15px 0;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background: #222;
-    color: white;
-    box-sizing: border-box;
+    height: 100%;
+    object-fit: cover;
+    mix-blend-mode: multiply; /* Faz a foto pegar a cor do fundo */
+    opacity: 0.7;
 }
 
-.btn-login {
+.overlay-gradiente {
+    position: absolute;
+    bottom: 0;
     width: 100%;
-    padding: 15px;
-    background: var(--primaria);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
+    height: 50px;
+    background: linear-gradient(to top, var(--fundo-card), transparent);
 }
 
-.btn-login:hover { background: #48dbfb; color: black; }
+.conteudo {
+    padding: 30px;
+    color: var(--texto);
+}
 
-.grid-nichos {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.conteudo h2 { margin-bottom: 5px; color: var(--cor-destaque); }
+.conteudo p { font-size: 0.9em; opacity: 0.6; margin-bottom: 25px; }
+
+.formulario {
+    display: flex;
+    flex-direction: column;
     gap: 15px;
-    margin: 20px 0;
 }
 
-.nicho-btn {
-    background: #252525;
-    border: 2px solid transparent;
-    padding: 20px;
-    border-radius: 12px;
+.linha-dupla {
+    display: flex;
+    gap: 15px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 5px;
+}
+
+.campo label {
+    font-size: 0.8em;
+    font-weight: bold;
+    color: var(--cor-destaque);
+    text-transform: uppercase;
+}
+
+.campo input {
+    background: var(--fundo-input);
+    border: 1px solid #333;
+    padding: 12px;
+    border-radius: 8px;
     color: white;
+    outline: none;
+    transition: 0.3s;
+}
+
+.campo input:focus {
+    border-color: var(--cor-destaque);
+    box-shadow: 0 0 8px rgba(89, 0, 255, 0.2);
+}
+
+.btn-verificar {
+    margin-top: 10px;
+    background: var(--cor-destaque);
+    color: #000;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
 }
 
-.nicho-btn:hover { border-color: var(--primaria); background: #333; }
-
-.locked { opacity: 0.4; cursor: not-allowed; }
-
-.card-pro {
-    background: #1a1a1a;
-    border: 2px solid var(--secundaria);
-    border-radius: 15px;
-    padding: 20px;
-    margin-top: 30px;
+.btn-verificar:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
 }
-
-.btn-kiwify {
-    display: block;
-    background: var(--secundaria);
-    color: white;
-    text-decoration: none;
-    padding: 15px;
-    border-radius: 8px;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-/* ESTILO DOS SEUS CRÉDITOS */
-.creditos {
-    margin-top: 30px;
-    font-size: 12px;
-    color: var(--cinza-discreto);
-}
-
-.hidden { display: none !important; }
