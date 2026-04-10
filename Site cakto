@@ -1,57 +1,30 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Seu Produto</title>
-    <style>
-        /* Desabilita seleção de texto */
-        body { 
-            user-select: none; 
-            -webkit-user-select: none; 
-            background: #000; color: #fff; font-family: sans-serif; padding: 20px;
-        }
-        .conteudo-protegido { max-width: 800px; margin: auto; }
+<input type="email" id="email" placeholder="Seu e-mail">
+<button onclick="gerarPix()">Pagar R$ 14,30</button>
+
+<div id="pix-area" style="display:none">
+    <div id="canvas-qrcode"></div>
+    <p>Pague e aguarde a liberação automática...</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+async function gerarPix() {
+    const email = document.getElementById('email').value;
+    
+    // 1. Cria a venda no seu Supabase como 'pendente'
+    const { data, error } = await supabase
+        .from('vendas')
+        .insert([{ email: email, status: 'pendente', checkout_id: 'TXID_GERADO_PELO_INTER' }])
+        .select();
+
+    if (data) {
+        document.getElementById('pix-area').style.display = 'block';
+        // 2. Aqui você gera o QR Code com o 'Copia e Cola' que o Inter te der
+        new QRCode(document.getElementById("canvas-qrcode"), "COPIA_E_COLA_DO_INTER");
         
-        /* Marca d'água flutuante para inibir gravação de tela */
-        .watermark {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            opacity: 0.1; font-size: 5vw; pointer-events: none; color: white; z-index: 9999;
-        }
-    </style>
-</head>
-<body oncontextmenu="return false;"> <div class="watermark">ACESSO PRIVADO</div>
-
-    <div class="conteudo-protegido">
-        <h1>Seu Conteúdo Exclusivo</h1>
-        <hr>
-        <p>Este conteúdo é protegido. Não tente gravar ou printar.</p>
-        
-        <div class="area-do-produto">
-            [O CONTEÚDO DO SEU PRODUTO VAI AQUI]
-        </div>
-    </div>
-
-    <script>
-        // 1. Bloquear Print Screen e ferramentas de desenvolvedor
-        document.addEventListener('keydown', function(e) {
-            if (e.key === "PrintScreen" || e.keyCode === 44) {
-                alert("Captura de tela desativada para proteger o conteúdo.");
-                navigator.clipboard.writeText(""); // Limpa o que ele copiou
-            }
-            if (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u')) {
-                e.preventDefault();
-            }
-        });
-
-        // 2. Blur quando o usuário sai da aba (evita preparar gravadores fora do foco)
-        window.addEventListener('blur', () => {
-            document.title = "⚠️ Conteúdo Protegido";
-            document.body.style.filter = "blur(15px)";
-        });
-        window.addEventListener('focus', () => {
-            document.title = "Seu Produto";
-            document.body.style.filter = "none";
-        });
-    </script>
-</body>
-</html>
+        // 3. Fica ouvindo o banco pra ver quando mudar pra 'pago'
+        ouvirPagamento(data[0].id);
+    }
+}
+</script>
