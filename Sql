@@ -1,0 +1,17 @@
+-- Remove qualquer política antiga para não dar conflito
+DROP POLICY IF EXISTS "permitir_insercao_publica" ON public.produto_cakto;
+DROP POLICY IF EXISTS "permitir_leitura_publica" ON public.produto_cakto;
+
+-- Cria a política de INSERÇÃO (para o botão de pagar funcionar)
+CREATE POLICY "permitir_insercao_publica" 
+ON public.produto_cakto 
+FOR INSERT 
+TO anon 
+WITH CHECK (true);
+
+-- Cria a política de LEITURA (para o site liberar o conteúdo após o pago)
+CREATE POLICY "permitir_leitura_publica" 
+ON public.produto_cakto 
+FOR SELECT 
+TO anon 
+USING (true);
