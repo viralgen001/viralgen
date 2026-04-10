@@ -2,28 +2,56 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oferta Exclusiva</title>
+    <title>Seu Produto</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #0f0f0f; color: white; padding: 50px; }
-        .card { background: #1a1a1a; padding: 30px; border-radius: 15px; max-width: 400px; margin: auto; border: 1px solid #333; }
-        h1 { color: #00ff88; }
-        .preco { font-size: 2em; margin: 20px 0; }
-        .btn { 
-            background: #00ff88; color: black; border: none; padding: 15px 30px; 
-            font-weight: bold; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-block;
+        /* Desabilita seleção de texto */
+        body { 
+            user-select: none; 
+            -webkit-user-select: none; 
+            background: #000; color: #fff; font-family: sans-serif; padding: 20px;
         }
-        .btn:hover { background: #00cc6e; }
+        .conteudo-protegido { max-width: 800px; margin: auto; }
+        
+        /* Marca d'água flutuante para inibir gravação de tela */
+        .watermark {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            opacity: 0.1; font-size: 5vw; pointer-events: none; color: white; z-index: 9999;
+        }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;"> <div class="watermark">ACESSO PRIVADO</div>
 
-    <div class="card">
-        <h1>Nome do Produto</h1>
-        <p>Acesso imediato ao conteúdo exclusivo.</p>
-        <div class="preco">R$ 14,30</div>
-        <a href="SEU_LINK_DA_CAKTO_AQUI" class="btn">QUERO ACESSAR AGORA</a>
+    <div class="conteudo-protegido">
+        <h1>Seu Conteúdo Exclusivo</h1>
+        <hr>
+        <p>Este conteúdo é protegido. Não tente gravar ou printar.</p>
+        
+        <div class="area-do-produto">
+            [O CONTEÚDO DO SEU PRODUTO VAI AQUI]
+        </div>
     </div>
 
+    <script>
+        // 1. Bloquear Print Screen e ferramentas de desenvolvedor
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "PrintScreen" || e.keyCode === 44) {
+                alert("Captura de tela desativada para proteger o conteúdo.");
+                navigator.clipboard.writeText(""); // Limpa o que ele copiou
+            }
+            if (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
+
+        // 2. Blur quando o usuário sai da aba (evita preparar gravadores fora do foco)
+        window.addEventListener('blur', () => {
+            document.title = "⚠️ Conteúdo Protegido";
+            document.body.style.filter = "blur(15px)";
+        });
+        window.addEventListener('focus', () => {
+            document.title = "Seu Produto";
+            document.body.style.filter = "none";
+        });
+    </script>
 </body>
 </html>
