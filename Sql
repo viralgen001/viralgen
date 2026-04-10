@@ -1,1 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptIA - Checkout</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0b0e14; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 380px; width: 100%; }
+        h1 { font-size: 26px; margin-bottom: 10px; background: linear-gradient(90deg, #8a2be2, #00ff88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        input { width: 100%; padding: 14px; margin: 20px 0; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; box-sizing: border-box; outline: none; }
+        button { width: 100%; padding: 16px; border-radius: 8px; border: none; background: #00ff88; color: #0d1117; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #00cc6e; transform: scale(1.02); }
+        #pix-area { display: none; margin-top: 25px; padding-top: 20px; border-top: 1px solid #30363d; }
+        .chave-pix { background: #0d1117; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 11px; margin: 15px 0; word-break: break-all; color: #00ff88; border: 1px dashed #30363d; }
+        #qrcode { margin: 20px auto; background: white; padding: 10px; border-radius: 10px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>ScriptIA Premium</h1>
+    <p>Acesso por apenas <strong>R$ 14,30</strong></p>
+    
+    <input type="email" id="email" placeholder="Seu melhor e-mail">
+    <button id="btn-gerar" onclick="enviarVenda()">GERAR PIX AGORA</button>
+
+    <div id="pix-area">
+        <p>Escaneie ou copie o código:</p>
+        <div id="qrcode"></div>
+        <div class="chave-pix" id="payload-display"></div>
+        <button onclick="copiarPix()" style="background: #333; color: white; font-size: 12px;">Copiar Código Pix</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+    // Credenciais corrigidas (Removido o erro do traço na KEY)
+    const SUPABASE_URL = 'https://yestwpawfhngpvovmrkh.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_pp0e2aJAHgIofuBHZWSr1w_287IGc_9';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function enviarVenda() {
+        const email = document.getElementById('email').value;
+        if(!email.includes('@')) return alert("E-mail inválido!");
+
+        document.getElementById('btn-gerar').innerText = "PROCESSANDO...";
+
+        const txid = "IA" + Math.random().toString(36).substr(2, 7).toUpperCase();
+        const chavePix = "a017d5c5-bd22-42d8-a805-b3850
 
