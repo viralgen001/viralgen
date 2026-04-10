@@ -13,28 +13,28 @@
         button { width: 100%; padding: 15px; border-radius: 8px; border: none; background: #00ff88; color: black; font-weight: bold; cursor: pointer; transition: 0.3s; }
         button:hover { transform: scale(1.02); background: #00cc6e; }
         #pix-area { display: none; margin-top: 25px; padding-top: 20px; border-top: 1px solid #222; }
-        .chave-pix { background: #222; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; margin: 10px 0; word-break: break-all; color: #00ff88; border: 1px dashed #444; }
+        .chave-pix { background: #222; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 11px; margin: 10px 0; word-break: break-all; color: #00ff88; border: 1px dashed #444; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <h1>ScriptIA Premium</h1>
-    <p style="color: #888;">Tenha acesso aos melhores prompts por apenas <strong>R$ 14,30</strong></p>
+    <p style="color: #888;">Acesso imediato por apenas <strong>R$ 14,30</strong></p>
     
     <input type="email" id="email" placeholder="Seu melhor e-mail">
     <button onclick="enviarVenda()">GERAR PIX AGORA</button>
 
     <div id="pix-area">
-        <p>Aguardando pagamento...</p>
-        <div class="chave-pix" id="payload-display">Gerando código...</div>
-        <button onclick="copiarPix()" style="background: #222; color: white; margin-top: 10px; padding: 10px; width: 100%; border-radius: 8px; border: none; cursor: pointer;">Copiar Código Pix</button>
+        <p style="font-size: 14px;">Copie o código abaixo:</p>
+        <div class="chave-pix" id="payload-display">Gerando...</div>
+        <button onclick="copiarPix()" style="background: #222; color: white; margin-top: 10px; padding: 10px; font-size: 12px;">Copiar Código Pix</button>
+        <p style="font-size: 10px; color: #555; margin-top: 15px;">Aguardando confirmação automática...</p>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // Seus dados reais extraídos da imagem
     const SUPABASE_URL = 'https://yestwpawfhngpvovmrkh.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_pp0e2aJAHgIofuBHZWSr1w_287IGc_9';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -43,14 +43,16 @@
         const email = document.getElementById('email').value;
         if(!email.includes('@')) return alert("Digite um e-mail válido!");
 
-        // 1. TXID único para chave aleatória
+        // 1. Gera o TXID (ID de Transação único)
         const txid = "IA" + Math.random().toString(36).substr(2, 7).toUpperCase();
 
-        // 2. Montagem do Pix (Coloque sua chave real aqui no lugar de SUACHAVE)
-        const chavePix = "SUACHAVE"; 
-        const pixCopiaCola = `00020101021226580014br.gov.bcb.pix01${chavePix.length.toString().padStart(2, '0')}${chavePix}520400005303986540514.305802BR5908PEDRODEV6009SAOPAULO62${(txid.length + 4).toString().padStart(2, '0')}05${txid.length.toString().padStart(2, '0')}${txid}6304`;
+        // 2. Sua Chave EVP do Inter
+        const chavePix = "a017d5c5-bd22-42d8-a805-b3850c7142b7"; 
+        
+        // 3. Montagem do Pix Copia e Cola dinâmico (R$ 14,30)
+        const pixCopiaCola = `00020101021226580014br.gov.bcb.pix0136${chavePix}520400005303986540514.305802BR5919PEDRO G DA C COELHO6007ARACATI62${(txid.length + 4).toString().padStart(2, '0')}05${txid.length.toString().padStart(2, '0')}${txid}6304`;
 
-        // 3. Insert na tabela produto_cackto (com dois C)
+        // 4. Salva no banco produto_cackto
         const { data, error } = await _supabase
             .from('produto_cackto')
             .insert([{ 
@@ -73,7 +75,7 @@
     function copiarPix() {
         const texto = document.getElementById('payload-display').innerText;
         navigator.clipboard.writeText(texto);
-        alert("Pix copiado!");
+        alert("Pix copiado! Agora pague no seu banco.");
     }
 
     function ouvirPagamento(vendaId) {
@@ -92,6 +94,5 @@
             }).subscribe();
     }
 </script>
-
 </body>
 </html>
