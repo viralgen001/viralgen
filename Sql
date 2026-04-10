@@ -2,39 +2,96 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Sua Entrega - ScriptIA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptIA - Checkout</title>
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; text-align: center; padding: 50px; }
-        .conteudo { display: none; max-width: 600px; margin: auto; background: #111; padding: 30px; border-radius: 15px; }
+        body { font-family: 'Inter', sans-serif; background: #050505; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #111; border: 1px solid #222; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 350px; }
+        h1 { font-size: 24px; margin-bottom: 10px; background: linear-gradient(90deg, #8a2be2, #00ff88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        input { width: 100%; padding: 12px; margin: 20px 0; border-radius: 8px; border: 1px solid #333; background: #1a1a1a; color: white; box-sizing: border-box; outline: none; }
+        input:focus { border-color: #00ff88; }
+        button { width: 100%; padding: 15px; border-radius: 8px; border: none; background: #00ff88; color: black; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { transform: scale(1.02); background: #00cc6e; }
+        #pix-area { display: none; margin-top: 25px; padding-top: 20px; border-top: 1px solid #222; }
+        .chave-pix { background: #222; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; margin: 10px 0; word-break: break-all; color: #00ff88; border: 1px dashed #444; }
     </style>
 </head>
 <body>
-    <div id="area-restrita" class="conteudo">
-        <h1>✅ Acesso Liberado!</h1>
-        <p>Aqui está o seu pack de prompts:</p>
-        <textarea style="width:100%; height:200px; background:#000; color:#0f0; border:1px solid #333;">
-            PROMPT 01: ...
-            PROMPT 02: ...
-        </textarea>
+
+<div class="card">
+    <h1>ScriptIA Premium</h1>
+    <p style="color: #888;">Tenha acesso aos melhores prompts por apenas <strong>R$ 14,30</strong></p>
+    
+    <input type="email" id="email" placeholder="Seu melhor e-mail">
+    <button onclick="enviarVenda()">GERAR PIX AGORA</button>
+
+    <div id="pix-area">
+        <p>Aguardando pagamento...</p>
+        <div class="chave-pix" id="payload-display">Gerando código...</div>
+        <button onclick="copiarPix()" style="background: #222; color: white; margin-top: 10px; padding: 10px; width: 100%; border-radius: 8px; border: none; cursor: pointer;">Copiar Código Pix</button>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const SUPABASE_URL = 'SUA_URL_DO_SUPABASE';
-        const SUPABASE_KEY = 'SUA_KEY_ANON_DO_SUPABASE';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    // Seus dados reais extraídos da imagem
+    const SUPABASE_URL = 'https://yestwpawfhngpvovmrkh.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_pp0e2aJAHgIofuBHZWSr1w_287IGc_9';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        async function validar() {
-            const token = new URLSearchParams(window.location.search).get('token');
-            const { data } = await _supabase.from('produto_cackto').select('status').eq('id', token).single();
-            
-            if (data && data.status === 'pago') {
-                document.getElementById('area-restrita').style.display = 'block';
-            } else {
-                document.body.innerHTML = "<h1>Acesso Negado ou Pendente</h1>";
-            }
+    async function enviarVenda() {
+        const email = document.getElementById('email').value;
+        if(!email.includes('@')) return alert("Digite um e-mail válido!");
+
+        // 1. TXID único para chave aleatória
+        const txid = "IA" + Math.random().toString(36).substr(2, 7).toUpperCase();
+
+        // 2. Montagem do Pix (Coloque sua chave real aqui no lugar de SUACHAVE)
+        const chavePix = "SUACHAVE"; 
+        const pixCopiaCola = `00020101021226580014br.gov.bcb.pix01${chavePix.length.toString().padStart(2, '0')}${chavePix}520400005303986540514.305802BR5908PEDRODEV6009SAOPAULO62${(txid.length + 4).toString().padStart(2, '0')}05${txid.length.toString().padStart(2, '0')}${txid}6304`;
+
+        // 3. Insert na tabela produto_cackto (com dois C)
+        const { data, error } = await _supabase
+            .from('produto_cackto')
+            .insert([{ 
+                email: email, 
+                status: 'pendente',
+                id_transacao: txid 
+            }])
+            .select();
+
+        if (error) {
+            console.error(error);
+            alert("Erro ao conectar com o banco.");
+        } else {
+            document.getElementById('pix-area').style.display = 'block';
+            document.getElementById('payload-display').innerText = pixCopiaCola;
+            ouvirPagamento(data[0].id);
         }
-        validar();
-    </script>
+    }
+
+    function copiarPix() {
+        const texto = document.getElementById('payload-display').innerText;
+        navigator.clipboard.writeText(texto);
+        alert("Pix copiado!");
+    }
+
+    function ouvirPagamento(vendaId) {
+        _supabase
+            .channel('vendas')
+            .on('postgres_changes', { 
+                event: 'UPDATE', 
+                schema: 'public', 
+                table: 'produto_cackto', 
+                filter: `id=eq.${vendaId}` 
+            }, 
+            payload => {
+                if (payload.new.status === 'pago') {
+                    window.location.href = `produto.html?token=${vendaId}`;
+                }
+            }).subscribe();
+    }
+</script>
+
 </body>
 </html>
