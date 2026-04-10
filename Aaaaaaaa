@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptIA - Checkout</title>
+    <style>
+        body { font-family: sans-serif; background: #0b0e14; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; padding: 40px; border-radius: 20px; text-align: center; width: 100%; max-width: 350px; }
+        h1 { color: #00ff88; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; border-radius: 8px; border: none; background: #00ff88; color: #0d1117; font-weight: bold; cursor: pointer; }
+        #pix-area { display: none; margin-top: 20px; }
+        #qrcode { background: white; padding: 10px; border-radius: 10px; display: inline-block; margin-bottom: 15px; }
+        textarea { width: 100%; background: #0d1117; color: #00ff88; border: 1px solid #30363d; font-size: 10px; padding: 10px; border-radius: 5px; height: 60px; resize: none; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>ScriptIA</h1>
+    <p>Valor: R$ 14,30</p>
+    <input type="email" id="email" placeholder="Seu e-mail">
+    <button id="btn-gerar" onclick="enviarVenda()">GERAR PIX AGORA</button>
+
+    <div id="pix-area">
+        <div id="qrcode"></div>
+        <textarea id="payload" readonly></textarea>
+        <p style="font-size: 12px; margin-top: 10px; color: #8b949e;">Pague para liberar o acesso.</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+    // Credenciais confirmadas pelas suas fotos
+    const SUPABASE_URL = 'https://yestwpawfhngpvovmrkh.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_pp0e2aJAHgIofuBHZWSr1w_287IGc_9';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function enviarVenda() {
+        const emailInput = document.getElementById('email').value;
+        if(!emailInput.includes('@')) return alert("E-mail inválido!");
+
+        const btn = document.getElementById('btn-gerar');
+        btn.innerText = "PROCESSANDO...";
+        btn.disabled = true;
+
+        const txid = "IA" + Math.random().toString(36).substr(2, 7).toUpperCase();
+        const chavePix = "a017d5c5-bd22-42d8-a805-b3850c7142b7"; 
+        const pix = `00020101021226580014br.gov.bcb.pix0136${chavePix}520400005303986540514.305802BR5919PEDRO G DA C COELHO6007ARACATI62${(txid.length + 4).toString().padStart(2, '0')}05${txid.length.toString().padStart(2, '0')}${txid}6304`;
+
+        try {
+            // Enviando para a tabela 'produto_cackto' na coluna 'checkout_id'
+            const { error } = await _supabase
+                .from('produto_cackto')
+                .insert([{ 
+                    email: emailInput, 
+                    status: 'pendente', 
+                    checkout_id: txid 
+                }]);
+
+            if (error) throw error;
+
+            // Mostra a área do Pix e gera o QR Code
+            document.getElementById('pix-area').style.display = 'block';
+            document.getElementById('payload').value = pix;
+            document.getElementById('qrcode').innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), { text: pix, width: 140, height: 140 });
+            btn.innerText = "PIX GERADO!";
+
+        } catch (err) {
+            console.error(err);
+            alert("Erro ao conectar. Verifique o console (F12) para detalhes.");
+            btn.innerText = "GERAR PIX AGORA";
+            btn.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>
