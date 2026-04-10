@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oferta Exclusiva</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #0f0f0f; color: white; padding: 50px; }
+        .card { background: #1a1a1a; padding: 30px; border-radius: 15px; max-width: 400px; margin: auto; border: 1px solid #333; }
+        h1 { color: #00ff88; }
+        .preco { font-size: 2em; margin: 20px 0; }
+        .btn { 
+            background: #00ff88; color: black; border: none; padding: 15px 30px; 
+            font-weight: bold; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-block;
+        }
+        .btn:hover { background: #00cc6e; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Nome do Produto</h1>
+        <p>Acesso imediato ao conteúdo exclusivo.</p>
+        <div class="preco">R$ 14,30</div>
+        <a href="SEU_LINK_DA_CAKTO_AQUI" class="btn">QUERO ACESSAR AGORA</a>
+    </div>
+
+</body>
+</html>
