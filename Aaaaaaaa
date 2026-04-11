@@ -7,9 +7,10 @@
     <style>
         body { font-family: sans-serif; background: #0b0e14; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .card { background: #161b22; border: 1px solid #30363d; padding: 40px; border-radius: 20px; text-align: center; width: 100%; max-width: 350px; }
-        h1 { color: #00ff88; margin-bottom: 20px; }
+        h1 { color: #00ff88; margin-bottom: 10px; }
         input { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; box-sizing: border-box; }
         button { width: 100%; padding: 15px; border-radius: 8px; border: none; background: #00ff88; color: #0d1117; font-weight: bold; cursor: pointer; }
+        button:disabled { background: #30363d; color: #8b949e; }
         #pix-area { display: none; margin-top: 20px; }
         #qrcode { background: white; padding: 10px; border-radius: 10px; display: inline-block; margin-bottom: 15px; }
         textarea { width: 100%; background: #0d1117; color: #00ff88; border: 1px solid #30363d; font-size: 10px; padding: 10px; border-radius: 5px; height: 60px; resize: none; }
@@ -34,14 +35,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
-    // Credenciais confirmadas pelas suas fotos
-    const SUPABASE_URL = 'https://yestwpawfhngpvovmrkh.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_pp0e2aJAHgIofuBHZWSr1w_287IGc_9';
+    // Configurações usando os dados da sua foto 1
+    const SUPABASE_URL = 'https://yestwpawfhngpvovmrkh.supabase.co'; 
+    const SUPABASE_KEY = 'sb_publishable_pp0e2aJAHgIofuBHZWSr1w_287IGc_9'; 
+
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function enviarVenda() {
-        const emailInput = document.getElementById('email').value;
-        if(!emailInput.includes('@')) return alert("E-mail inválido!");
+        const email = document.getElementById('email').value;
+        if(!email.includes('@')) return alert("E-mail inválido!");
 
         const btn = document.getElementById('btn-gerar');
         btn.innerText = "PROCESSANDO...";
@@ -52,18 +54,17 @@
         const pix = `00020101021226580014br.gov.bcb.pix0136${chavePix}520400005303986540514.305802BR5919PEDRO G DA C COELHO6007ARACATI62${(txid.length + 4).toString().padStart(2, '0')}05${txid.length.toString().padStart(2, '0')}${txid}6304`;
 
         try {
-            // Enviando para a tabela 'produto_cackto' na coluna 'checkout_id'
+            // Agora com a coluna correta: checkout_id
             const { error } = await _supabase
                 .from('produto_cackto')
                 .insert([{ 
-                    email: emailInput, 
+                    email: email, 
                     status: 'pendente', 
                     checkout_id: txid 
                 }]);
 
             if (error) throw error;
 
-            // Mostra a área do Pix e gera o QR Code
             document.getElementById('pix-area').style.display = 'block';
             document.getElementById('payload').value = pix;
             document.getElementById('qrcode').innerHTML = "";
@@ -72,7 +73,7 @@
 
         } catch (err) {
             console.error(err);
-            alert("Erro ao conectar. Verifique o console (F12) para detalhes.");
+            alert("Erro ao salvar. Verifique se o RLS está desativado.");
             btn.innerText = "GERAR PIX AGORA";
             btn.disabled = false;
         }
