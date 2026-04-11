@@ -2,69 +2,78 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>ScriptIA - Painel Grátis</title>
+    <title>ScriptIA - Dashboard 100% Free</title>
     <style>
         body { background: #0b0e14; color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        .header { background: #161b22; padding: 15px; border-bottom: 1px solid #30363d; text-align: center; color: #00ff88; font-weight: bold; }
+        .header { background: #161b22; padding: 15px; border-bottom: 1px solid #00ff88; text-align: center; color: #00ff88; font-weight: bold; }
         #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 12px; border-radius: 10px; max-width: 80%; line-height: 1.4; }
+        .msg { padding: 12px; border-radius: 10px; max-width: 80%; line-height: 1.4; word-wrap: break-word; }
         .user { background: #00ff88; color: #0b0e14; align-self: flex-end; }
         .bot { background: #30363d; color: white; align-self: flex-start; }
         .input-box { background: #161b22; padding: 15px; display: flex; gap: 10px; }
         input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; outline: none; }
         button { padding: 0 20px; background: #00ff88; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        button:disabled { background: #30363d; opacity: 0.6; }
+        button:disabled { background: #444; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
-<div class="header">SCRIPT IA - ACESSO LIBERADO</div>
+<div class="header">SCRIPT IA - MODO ILIMITADO</div>
 
 <div id="chat">
-    <div class="msg bot">Olá! Sou o ScriptIA. Já que o seu pagamento foi confirmado, em que posso te ajudar hoje?</div>
+    <div class="msg bot">Olá! Esta é a sua IA gratuita. Pode perguntar qualquer coisa sobre scripts ou códigos!</div>
 </div>
 
 <div class="input-box">
-    <input type="text" id="pergunta" placeholder="Pergunte qualquer coisa...">
-    <button id="btn" onclick="perguntar()">ENVIAR</button>
+    <input type="text" id="pergunta" placeholder="Digite sua dúvida...">
+    <button id="btn" onclick="chamarIA()">ENVIAR</button>
 </div>
 
-<script type="module">
-    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-
-    // --- COLOQUE SUA CHAVE GRÁTIS AQUI ---
-    const API_KEY = "COLE_AQUI_SUA_CHAVE_DO_GOOGLE_AI_STUDIO"; 
-    // -------------------------------------
-
-    const genAI = new GoogleGenerativeAI(API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    window.perguntar = async function() {
+<script>
+    async function chamarIA() {
         const input = document.getElementById('pergunta');
         const chat = document.getElementById('chat');
         const btn = document.getElementById('btn');
-        const texto = input.value;
+        const userText = input.value;
 
-        if (!texto) return;
+        if (!userText) return;
 
-        // Mostra pergunta do usuário
-        chat.innerHTML += `<div class="msg user">${texto}</div>`;
+        // Interface do usuário
+        chat.innerHTML += `<div class="msg user">${userText}</div>`;
         input.value = "";
         btn.disabled = true;
 
-        // Mensagem temporária da IA
-        const tempBot = document.createElement('div');
-        tempBot.className = 'msg bot';
-        tempBot.innerText = "...";
-        chat.appendChild(tempBot);
+        const botMsg = document.createElement('div');
+        botMsg.className = 'msg bot';
+        botMsg.innerText = "Pensando...";
+        chat.appendChild(botMsg);
         chat.scrollTop = chat.scrollHeight;
 
         try {
-            const result = await model.generateContent(texto);
-            const response = await result.response;
-            tempBot.innerText = response.text();
+            // Usando a API gratuita do Hugging Face (Modelo Llama 3)
+            const response = await fetch(
+                "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct",
+                {
+                    headers: { 
+                        "Content-Type": "application/json"
+                    },
+                    method: "POST",
+                    body: JSON.stringify({ inputs: userText }),
+                }
+            );
+
+            const result = await response.json();
+            
+            // O Hugging Face retorna um array com generated_text
+            if (result[0] && result[0].generated_text) {
+                // Remove o texto da pergunta que a IA às vezes repete
+                const finalResponse = result[0].generated_text.replace(userText, "").trim();
+                botMsg.innerText = finalResponse || "Sem resposta no momento.";
+            } else {
+                botMsg.innerText = "A IA está descansando. Tente novamente em 1 minuto.";
+            }
         } catch (error) {
-            tempBot.innerText = "Erro: Verifique se sua chave API está correta e ativa.";
+            botMsg.innerText = "Erro na conexão grátis. Tente novamente.";
         } finally {
             btn.disabled = false;
             chat.scrollTop = chat.scrollHeight;
