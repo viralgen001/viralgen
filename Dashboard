@@ -6,7 +6,7 @@
     <title>ScriptIA - Painel Premium</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0b0e14; color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; }
+        body { background: #0b0e14; color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
         .header { 
             background: #161b22; 
@@ -23,7 +23,6 @@
             flex: 1; 
             width: 100%; 
             background: #0d1117; 
-            overflow: hidden; 
         }
         
         iframe { 
@@ -34,9 +33,9 @@
 
         .footer-info {
             background: #161b22;
-            padding: 10px;
+            padding: 8px;
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             color: #8b949e;
         }
     </style>
@@ -50,22 +49,15 @@
 
     <div class="chat-container">
         <iframe 
-            src="https://duckduckgo.com/?q=DuckDuckGo+AI+Chat&ia=chat" 
+            src="https://huggingface.co/chat/" 
+            allow="clipboard-write"
             title="ScriptIA Engine">
         </iframe>
     </div>
 
     <div class="footer-info">
-        Conectado via ScriptIA Engine - Sistema 100% Online e Gratuito
+        Sistema ScriptIA - Inteligência Artificial 100% Online
     </div>
 
-    <script>
-        // Como você já resolveu a gravação no Supabase com 'checkout_id', 
-        // esse dashboard é o produto final que seu cliente acessa.
-        console.log("Dashboard carregado com sucesso.");
-        
-        // Dica: No seu projeto 'viralgen' do GitHub, 
-        // certifique-se de que o link de redirecionamento aponte para este arquivo.
-    </script>
 </body>
 </html>
