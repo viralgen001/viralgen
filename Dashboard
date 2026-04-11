@@ -2,55 +2,75 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Painel ScriptIA</title>
+    <title>ScriptIA - Painel Grátis</title>
     <style>
-        body { background: #0b0e14; color: white; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; margin: 0; }
-        .header { background: #161b22; padding: 15px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
-        #chat-window { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px 15px; border-radius: 10px; max-width: 80%; }
+        body { background: #0b0e14; color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        .header { background: #161b22; padding: 15px; border-bottom: 1px solid #30363d; text-align: center; color: #00ff88; font-weight: bold; }
+        #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 12px; border-radius: 10px; max-width: 80%; line-height: 1.4; }
         .user { background: #00ff88; color: #0b0e14; align-self: flex-end; }
         .bot { background: #30363d; color: white; align-self: flex-start; }
-        .input-area { background: #161b22; padding: 20px; display: flex; gap: 10px; }
+        .input-box { background: #161b22; padding: 15px; display: flex; gap: 10px; }
         input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; outline: none; }
         button { padding: 0 20px; background: #00ff88; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        button:disabled { background: #30363d; opacity: 0.6; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <strong>ScriptIA - Online</strong>
-        <span style="color: #00ff88;">● Acesso Premium</span>
-    </div>
+<div class="header">SCRIPT IA - ACESSO LIBERADO</div>
 
-    <div id="chat-window">
-        <div class="msg bot">Olá! Sou sua IA. Em que posso te ajudar hoje?</div>
-    </div>
+<div id="chat">
+    <div class="msg bot">Olá! Sou o ScriptIA. Já que o seu pagamento foi confirmado, em que posso te ajudar hoje?</div>
+</div>
 
-    <div class="input-area">
-        <input type="text" id="pergunta" placeholder="Digite sua pergunta aqui...">
-        <button onclick="falarComIA()">ENVIAR</button>
-    </div>
+<div class="input-box">
+    <input type="text" id="pergunta" placeholder="Pergunte qualquer coisa...">
+    <button id="btn" onclick="perguntar()">ENVIAR</button>
+</div>
 
-    <script>
-        // Aqui você vai conectar com a API da IA que escolher
-        async function falarComIA() {
-            const input = document.getElementById('pergunta');
-            const chat = document.getElementById('chat-window');
-            
-            if(!input.value) return;
+<script type="module">
+    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-            // Adiciona pergunta do usuário na tela
-            chat.innerHTML += `<div class="msg user">${input.value}</div>`;
-            
-            const textoUsuario = input.value;
-            input.value = ""; // Limpa campo
+    // --- COLOQUE SUA CHAVE GRÁTIS AQUI ---
+    const API_KEY = "COLE_AQUI_SUA_CHAVE_DO_GOOGLE_AI_STUDIO"; 
+    // -------------------------------------
 
-            // Resposta de teste (Enquanto você não coloca sua API Key)
-            setTimeout(() => {
-                chat.innerHTML += `<div class="msg bot">Entendi! Você perguntou sobre: "${textoUsuario}". Estou processando sua resposta...</div>`;
-                chat.scrollTop = chat.scrollHeight;
-            }, 1000);
+    const genAI = new GoogleGenerativeAI(API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    window.perguntar = async function() {
+        const input = document.getElementById('pergunta');
+        const chat = document.getElementById('chat');
+        const btn = document.getElementById('btn');
+        const texto = input.value;
+
+        if (!texto) return;
+
+        // Mostra pergunta do usuário
+        chat.innerHTML += `<div class="msg user">${texto}</div>`;
+        input.value = "";
+        btn.disabled = true;
+
+        // Mensagem temporária da IA
+        const tempBot = document.createElement('div');
+        tempBot.className = 'msg bot';
+        tempBot.innerText = "...";
+        chat.appendChild(tempBot);
+        chat.scrollTop = chat.scrollHeight;
+
+        try {
+            const result = await model.generateContent(texto);
+            const response = await result.response;
+            tempBot.innerText = response.text();
+        } catch (error) {
+            tempBot.innerText = "Erro: Verifique se sua chave API está correta e ativa.";
+        } finally {
+            btn.disabled = false;
+            chat.scrollTop = chat.scrollHeight;
         }
-    </script>
+    }
+</script>
+
 </body>
 </html>
